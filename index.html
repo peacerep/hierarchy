@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
+  <script src="https://pax-vis.github.io/pax-styles/colors.js"></script>
+  <script src="//d3js.org/d3.v4.min.js"></script>
+  <script src="https://d3js.org/queue.v1.min.js"></script>
+  <style>
+body {
+  background-color: #F4F4F4;
+  color: #181818;
+  font-family: 'Karla', sans-serif;
+}
+    
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 3px;
+}
+
+.node--internal text {
+  text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
+  font-weight: bold;
+}
+
+.node--leaf text {
+  font-size: 8pt;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1px;
+}
+
+.trigger text:hover {
+  cursor: pointer;
+}
+
+div.tooltip { 
+    position: absolute;     
+    text-align: left;     
+    width: auto;          
+    max-width: 300px;
+    height: auto;   
+    padding: 10px;       
+    font: 12px sans-serif;    
+
+    background: lightsteelblue; 
+    border: 0px;    
+    border-radius: 3px;     
+    pointer-events: none;     
+}
+
+</style>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-2 groupable">Select a group to sort agreements by:</div>
+      <div class="col-10 hierarchy"></div>
+    </div>
+  </div>
+<script>
+'use strict';
+var margin = {top: 130, right: 90, bottom: 30, left: 90},
+    width = 2500 - margin.left - margin.right,
+    height = 1000 - margin.top - margin.bottom;
+
+var svg = d3.select(".hierarchy").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+
+queue()
+  .defer(d3.json, 'hierarchy.json')
+  .defer(d3.csv, 'PAX_all_agreements.csv')
+  .await(init);
+
+
+var createNodes = function (root) {
+  var treemap = d3.tree().size([height, 300]);
+  return treemap(d3.hierarchy(root, function(d) {return d.children;}))
+}
+
+
+var createSubCategories = function(nodes) {
+  var arr = []
+  nodes.descendants().filter(function(d){
+    return d.depth == 2
+  }).forEach(function(d){
+    arr.push({"short": d.data.short, "x": d.x, "y": d.y, "overall": 0})
+  })
+return arr;
+}
+
+
+
+
+function treemap(nodes) {
+  var g = svg.append("g").attr("class","treemap").attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+  var link = g.selectAll(".link")
+    .data( nodes.descendants().slice(1))
+    .enter().append("path")
+    .attr("class", "link")
+    .attr("d", function(d) {
+       return "M" + d.y + "," + d.x
+         + "C" + (d.y + d.parent.y) / 2 + "," + d.x
+         + " " + (d.y + d.parent.y) / 2 + "," + d.parent.x
+         + " " + d.parent.y + "," + d.parent.x;
+       });
+
+  var node = g.selectAll(".node")
+    .data(nodes.descendants())
+    .enter().append("g")
+    .attr("class", function(d) { 
+      return "node" + 
+        (d.children ? " node--internal" : " node--leaf"); })
+    .attr("transform", function(d) { 
+      return "translate(" + d.y + "," + d.x + ")"; });
+
+  node.append("text")
+    .attr("dy", ".35em")
+    .attr("x", function(d) { return d.children ? -7 : -7; })
+    .style("text-anchor", function(d) { 
+      return d.children ? "end" : "end"; })
+    .text(function(d) { return d.data.name; });
+}
+
+
+
+
+function barchart(subCategories,data) {
+  data.forEach(function(agreement){
+    agreement.content = []
+    subCategories.forEach(function(category){
+      if(agreement[category.short] > 0) {
+         agreement.content.push({"level": agreement[category.short], "x": category.x, "agreement": agreement.Agt, "PPName": agreement.PPName, "category": category.short})
+         category.overall += +agreement[category.short]
+      } 
+    })
+  })
+
+  var scoreSize = d3.scaleLinear().domain(d3.extent(subCategories, function(d) {return d.overall})).range([0,50])
+  svg.append("g")
+  .attr("class","scores")
+  .attr("transform","translate(0,"+margin.top+")")
+  .selectAll("rect").data(subCategories).enter()
+    .append("rect")
+    .attr("x",400)
+    .attr("y",d => d.x -3)
+    .attr("width", d => scoreSize(d.overall))
+    .attr("height", 6)
+}
+
+
+function drawAgreements(data, root) {
+  var agreements = svg.append("g").attr("class","agreements").selectAll("g")
+  .data(data).enter()
+  .append("g").attr("class","agreement")
+
+  agreements.append("line")
+  .attr("x1",0).attr("y1",margin.top).attr("x2",0).attr("y2",height + margin.top)
+  .style("stroke",d3.rgb(0,0,0,.1)).style("stroke-width",.5)
+
+  agreements.append("text").attr("class","name")
+  .attr("x",-0)
+  .attr("y",0)
+  .style("font-size","7pt")
+  .attr("text-anchor","end")
+  .attr("transform","rotate(-90)")
+  //.text(d => d.Year)
+  
+  //var colorScale = d3.scaleOrdinal().domain([1,2,3]).range(["#FCE4BD","#FAD18F","#F9C46F"])
+  var circles = agreements.selectAll("circle").data(d => d.content).enter().append("circle").attr("fill","black")
+  .attr("cy",d => d.x + margin.top)
+  .attr("cx",0)
+  .attr("r",d => d.level * 1)
+  .attr("fill",d => {
+    return "black"
+  })
+
+
+  /*findParent("ImPK", root);
+  function findParent(needle, root) {
+    console.log(root)
+    //products.find(product => product.items.some(item => item.name === 'milk'));
+    var foo = Object.values(root.children).find(haystack => haystack.children.some(child => child.short === needle)).name
+  }*/
+
+ 
+  var div = d3.select("body").append("div") 
+    .attr("class", "tooltip")       
+    .style("opacity", 0);
+
+  circles.on("mouseover",function(d){
+    div.transition().duration(200).style("opacity", .9);    
+    div.html("<strong>Peace Process</strong>: "+d.PPName + "<br> <Strong>Agreement</strong>: "+ d.agreement + "<br><strong>"+ d.category + "</strong>: "+ d.level ).style("left", (d3.event.pageX + 5) + "px").style("top", (d3.event.pageY) + "px");  
+  })
+  .on("mouseout",function(d){div.transition().duration(200).style("opacity", 0);})
+
+  return agreements;
+}
+
+
+function move(agreements, data, sortBy) {
+  var groups = {}
+  data.forEach(function(agreement){
+    if(typeof groups[agreement[sortBy]] === 'undefined') groups[agreement[sortBy]] = []
+    groups[agreement[sortBy]].push(agreement)
+  })
+
+  groups = Object.entries(groups).sort(function(a,b){
+    function min(d) {return d3.min(d[1].map(function(d){return +d.Year}))}
+    return min(a) - min(b)
+  })
+
+  var groupStart = function(group) {
+    var x = 0
+    var posArr = groups.findIndex(g => g[0] == group)
+    for(var i = 0; i <= posArr; i++) {
+      if(i) x += groups[i-1][1].length * 1
+    }
+    x += posArr * 10
+    return x
+  }
+
+  agreements
+  .transition().duration(1500)
+  .attr("transform",function(d) {
+    var x = groupStart(d[sortBy]);
+    x += 450
+    
+    var groupPosition = groups.findIndex(g => g[0] == d[sortBy])
+    var agreementsPosition = groups[groupPosition][1].findIndex(g => g == d)
+    x += agreementsPosition * 1;
+    
+    return "translate("+(x)+",0)";
+  })
+
+
+  d3.selectAll("#groupLabel").remove();
+  var groupLabel = svg.append("g").attr("id","groupLabel").selectAll("g").data(Object.values(groups)).enter()
+  groupLabel.append("g")
+  .attr("transform",d =>"translate("+(450 + groupStart(d[0]))+",120)")
+  .append("text").attr("class","label")
+  .text(d=>d[0])
+  .style("font-size",13)
+  .attr("transform","rotate(-35)")
+}
+
+function init(error,root,data) {
+  data.sort(function(a,b){var parse = d3.timeParse("%Y-%m-%d"); return parse(a.Date) - parse(b.Date)})
+
+  var sortBy = "Reg"
+
+  var nodes = createNodes(root);
+  treemap(nodes);
+  var subCategories = createSubCategories(nodes);
+  barchart(subCategories, data)
+
+  //var groups = grouping(data,sortBy)
+  var agreements = drawAgreements(data, root)
+  move(agreements, data, sortBy)
+
+  var groupable = [
+      {short: "Con", name: "Country"},
+      {short: "Reg", name: "Region"},
+      {short: "PPName", name: "Peace Process"},
+      {short: "Stage", name: "Stage"},
+      {short: "StageSub", name: "Substage"},
+      {short: "Agtp", name: "Agreement Type"},
+    ]
+
+  var grouptrigger = d3.select(".groupable").append("ul").attr("class","trigger")
+  grouptrigger.selectAll("li").data(groupable).enter().append("li").html(d=>d.name).style("display","block")
+  .on("click",function(d){move(agreements, data, d.short)})
+  .on("mouseover", function() {d3.select(this).transition().duration(100).style("margin-left","10px")})
+  .on("mouseout", function() {d3.select(this).transition().duration(100).style("margin-left","0px")})
+}
+
+</script>
+</body>
