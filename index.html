@@ -16,7 +16,7 @@
         <p>The diversity of Peace Agreements is reflected in the variety of topics they touch.<br> Select a category to see, what areas are covered and how this changes over time:</p>
     </div>
     </div>
-    <div class="row">
+    <div class="row flex-row">
       <div class="col hierarchy"></div>
     </div>
   </div>
@@ -34,7 +34,7 @@ var svg = d3.select(".hierarchy").append("svg")
 
 queue()
   .defer(d3.json, 'hierarchy.json')
-  .defer(d3.csv, 'PAX_all_agreements.csv')
+  .defer(d3.csv, 'pax_all_agreements_Jun-2019.csv')
   .await(init);
 
 
@@ -167,7 +167,8 @@ function drawAgreements(data, root) {
 function move(agreements, data, sortBy) {
 
   d3.selectAll(".groupable li").classed("active",false)
-  d3.select("li#"+sortBy).classed("active",true)
+  d3.select("li#"+sortBy).attr("class","active")//.style("border","1px solid red") //classed("active",true)
+
   var groups = {}
   data.forEach(function(agreement){
     if(typeof groups[agreement[sortBy]] === 'undefined') groups[agreement[sortBy]] = []
@@ -179,6 +180,19 @@ function move(agreements, data, sortBy) {
     return min(a) - min(b)
   })
 
+
+  if(sortBy == "Stage") {
+
+    //reorder by agreement sequence
+    groups.sort((a,b)=>{
+      function getPos(short) {
+        return ["Cea","Pre","SubPar","SubComp","Imp","Ren","Oth"].indexOf(short)
+      }
+      return getPos(a[0]) - getPos(b[0])
+    })
+  }
+
+  
 
   var groupStart = function(group) {
     var x = 0
@@ -210,7 +224,22 @@ function move(agreements, data, sortBy) {
   .attr("transform",d =>"translate("+(450 + groupStart(d[0]))+",120)")
   .append("text").attr("class","label")
   .text(d=>{
-    return d[0]
+    var name
+    if(sortBy == "Stage") {
+      var translate = {
+        "Cea": "Ceasefire/related",
+        "Pre": "Prenegotiation",
+        "SubPar": "Framework-substantive, partial",
+        "SubComp": "Framework-substantive, comprehensive",
+        "Imp": "Implementation",
+        "Ren": "Renewal",
+        "Oth": "Other",
+      }
+      return (translate[d[0]])
+    } else {
+      name = d[0]
+    }
+    return name;
   })
   .style("font-size",13)
   .attr("transform","rotate(-35)")
@@ -224,26 +253,27 @@ function init(error,root,data) {
   barchart(subCategories, data)
 
   //var groups = grouping(data,sortBy)
+  var sortBy = "Stage"
   var agreements = drawAgreements(data, root)
-  move(agreements, data, "Reg")
+  move(agreements, data, sortBy)
 
   var groupable = [
       {short: "Con", name: "Country"},
       {short: "Reg", name: "Region"},
       {short: "PPName", name: "Peace Process"},
       {short: "Stage", name: "Stage"},
-      {short: "StageSub", name: "Substage"},
+      //{short: "StageSub", name: "Substage"},
       {short: "Agtp", name: "Agreement Type"},
     ]
 
   var grouptrigger = d3.select(".groupable").append("ul")
-  grouptrigger.selectAll("li").data(groupable).enter().append("li").attr("id",d=>d.short).html(d=>d.name)
+  grouptrigger.selectAll("li").data(groupable).enter().append("li").attr("id",d=>d.short).html(d=>d.name).attr("class",d=> {if (d.short == sortBy) return "active"})
   .on("click",function(d){move(agreements, data, d.short);})
-  .on("mouseover", function() {d3.select(this).style("border-bottom","4px solid #181818")})
+  /*.on("mouseover", function() {d3.select(this).style("border-bottom","4px solid #181818")})
   .on("mouseout", function(d) {
     var x = d3.select(this)
     if(!x.classed("active")) x.style("border-bottom","4px solid #F4F4F4")
-  })
+  })*/
 }
 
 </script>
