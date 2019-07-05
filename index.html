@@ -3,63 +3,21 @@
   <meta charset="utf-8">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
-  <script src="https://pax-vis.github.io/pax-styles/colors.js"></script>
+  <link href="style.css" rel="stylesheet">
   <script src="//d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/queue.v1.min.js"></script>
-  <style>
-body {
-  background-color: #F4F4F4;
-  color: #181818;
-  font-family: 'Karla', sans-serif;
-}
-    
-.node circle {
-  fill: #fff;
-  stroke: steelblue;
-  stroke-width: 3px;
-}
 
-.node--internal text {
-  text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
-  font-weight: bold;
-}
-
-.node--leaf text {
-  font-size: 8pt;
-}
-
-.link {
-  fill: none;
-  stroke: #ccc;
-  stroke-width: 1px;
-}
-
-.trigger text:hover {
-  cursor: pointer;
-}
-
-div.tooltip { 
-    position: absolute;     
-    text-align: left;     
-    width: auto;          
-    max-width: 300px;
-    height: auto;   
-    padding: 10px;       
-    font: 12px sans-serif;    
-
-    background: lightsteelblue; 
-    border: 0px;    
-    border-radius: 3px;     
-    pointer-events: none;     
-}
-
-</style>
 
 <body>
   <div class="container-fluid">
+    <div class="row intro">
+      <div class="col groupable">
+        <h1 style="font-weight: bold;">Peace Agreement <br>Hierarchy & Continuity</h1>
+        <p>The diversity of Peace Agreements is reflected in the variety of topics they touch.<br> Select a category to see, what areas are covered and how this changes over time:</p>
+    </div>
+    </div>
     <div class="row">
-      <div class="col-2 groupable">Select a group to sort agreements by:</div>
-      <div class="col-10 hierarchy"></div>
+      <div class="col hierarchy"></div>
     </div>
   </div>
 <script>
@@ -67,6 +25,8 @@ div.tooltip {
 var margin = {top: 130, right: 90, bottom: 30, left: 90},
     width = 2500 - margin.left - margin.right,
     height = 1000 - margin.top - margin.bottom;
+
+var agreementDistance = 1.5
 
 var svg = d3.select(".hierarchy").append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -162,7 +122,7 @@ function drawAgreements(data, root) {
 
   agreements.append("line")
   .attr("x1",0).attr("y1",margin.top).attr("x2",0).attr("y2",height + margin.top)
-  .style("stroke",d3.rgb(0,0,0,.1)).style("stroke-width",.5)
+  .style("stroke",d3.rgb(0,0,0,.6)).style("stroke-width",.2)
 
   agreements.append("text").attr("class","name")
   .attr("x",-0)
@@ -205,6 +165,9 @@ function drawAgreements(data, root) {
 
 
 function move(agreements, data, sortBy) {
+
+  d3.selectAll(".groupable li").classed("active",false)
+  d3.select("li#"+sortBy).classed("active",true)
   var groups = {}
   data.forEach(function(agreement){
     if(typeof groups[agreement[sortBy]] === 'undefined') groups[agreement[sortBy]] = []
@@ -216,11 +179,12 @@ function move(agreements, data, sortBy) {
     return min(a) - min(b)
   })
 
+
   var groupStart = function(group) {
     var x = 0
     var posArr = groups.findIndex(g => g[0] == group)
     for(var i = 0; i <= posArr; i++) {
-      if(i) x += groups[i-1][1].length * 1
+      if(i) x += groups[i-1][1].length * agreementDistance
     }
     x += posArr * 10
     return x
@@ -234,7 +198,7 @@ function move(agreements, data, sortBy) {
     
     var groupPosition = groups.findIndex(g => g[0] == d[sortBy])
     var agreementsPosition = groups[groupPosition][1].findIndex(g => g == d)
-    x += agreementsPosition * 1;
+    x += agreementsPosition * agreementDistance;
     
     return "translate("+(x)+",0)";
   })
@@ -245,16 +209,15 @@ function move(agreements, data, sortBy) {
   groupLabel.append("g")
   .attr("transform",d =>"translate("+(450 + groupStart(d[0]))+",120)")
   .append("text").attr("class","label")
-  .text(d=>d[0])
+  .text(d=>{
+    return d[0]
+  })
   .style("font-size",13)
   .attr("transform","rotate(-35)")
 }
 
 function init(error,root,data) {
   data.sort(function(a,b){var parse = d3.timeParse("%Y-%m-%d"); return parse(a.Date) - parse(b.Date)})
-
-  var sortBy = "Reg"
-
   var nodes = createNodes(root);
   treemap(nodes);
   var subCategories = createSubCategories(nodes);
@@ -262,7 +225,7 @@ function init(error,root,data) {
 
   //var groups = grouping(data,sortBy)
   var agreements = drawAgreements(data, root)
-  move(agreements, data, sortBy)
+  move(agreements, data, "Reg")
 
   var groupable = [
       {short: "Con", name: "Country"},
@@ -273,11 +236,14 @@ function init(error,root,data) {
       {short: "Agtp", name: "Agreement Type"},
     ]
 
-  var grouptrigger = d3.select(".groupable").append("ul").attr("class","trigger")
-  grouptrigger.selectAll("li").data(groupable).enter().append("li").html(d=>d.name).style("display","block")
-  .on("click",function(d){move(agreements, data, d.short)})
-  .on("mouseover", function() {d3.select(this).transition().duration(100).style("margin-left","10px")})
-  .on("mouseout", function() {d3.select(this).transition().duration(100).style("margin-left","0px")})
+  var grouptrigger = d3.select(".groupable").append("ul")
+  grouptrigger.selectAll("li").data(groupable).enter().append("li").attr("id",d=>d.short).html(d=>d.name)
+  .on("click",function(d){move(agreements, data, d.short);})
+  .on("mouseover", function() {d3.select(this).style("border-bottom","4px solid #181818")})
+  .on("mouseout", function(d) {
+    var x = d3.select(this)
+    if(!x.classed("active")) x.style("border-bottom","4px solid #F4F4F4")
+  })
 }
 
 </script>
