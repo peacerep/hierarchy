@@ -2,8 +2,18 @@ body {
   background-color: #F4F4F4;
   color: #181818;
   font-family: 'Karla', sans-serif;
+  margin: 0px;
 }
-    
+
+.testimonial-group > .row {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.testimonial-group > .row > .col-xs-4 {
+  display: inline-block;
+  float: none;
+}
+     
 .node circle {
   fill: #fff;
   stroke: steelblue;
@@ -67,8 +77,30 @@ div.tooltip {
     pointer-events: none;     
 }
 
-.intro {
+#intro {
   background-color: steelblue;
   padding: 50px 0;
   color: #F4F4F4;
 }
+
+
+  .scroll-x {
+   overflow-x: auto;
+  white-space: nowrap;
+  }
+
+  .scroll-x .col div {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .tree {
+    position: fixed;
+    left: 0px;
+    color: #fff;
+    background-color: rgba(244,244,244,.95);
+  }
+
+  .hierarchy {
+    margin-left: 400px;
+  }

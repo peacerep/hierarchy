@@ -1,36 +1,69 @@
 <!DOCTYPE html>
 <head>
   <meta charset="utf-8">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/b ootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
   <link href="style.css" rel="stylesheet">
   <script src="//d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/queue.v1.min.js"></script>
+</head>
+<style>
 
+
+</style>
 
 <body>
+
   <div class="container-fluid">
-    <div class="row intro">
-      <div class="col groupable">
+    <div class="row" id="intro">
+      <div class="groupable">
         <h1 style="font-weight: bold;">Peace Agreement <br>Hierarchy & Continuity</h1>
         <p>The diversity of Peace Agreements is reflected in the variety of topics they touch.<br> Select a category to see, what areas are covered and how this changes over time:</p>
-    </div>
-    </div>
-    <div class="row flex-row">
-      <div class="col hierarchy"></div>
+      </div>
+    </div>  
+
+  
+    <div class="row scroll-x">
+      <div class="col">
+        <div class="tree" id="tree"></div>
+        <div class="hierarchy"></div>    
+      </div>
     </div>
   </div>
+
+  <script>
+(function(window){
+  var supportPageOffset = window.pageXOffset !== undefined;
+  var isCSS1Compat = ((document.compatMode || "") === "CSS1Compat");
+ 
+  var demoItem3 = document.getElementById("tree"); 
+  window.addEventListener("scroll", function(e) {    
+  var y = supportPageOffset ? window.pageYOffset : isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
+ 
+    demoItem3.style.top = -y + $("#intro").height()+ 100 + "px";
+  });
+  
+})(window);
+ 
+  </script>
+  
+  <!--<div>
+    <div class="tree"></div>
+    <div class="hierarchy"></div>
+  </div>-->
 <script>
 'use strict';
 var margin = {top: 130, right: 90, bottom: 30, left: 90},
     width = 2500 - margin.left - margin.right,
-    height = 1000 - margin.top - margin.bottom;
+    height = 1650;
 
 var agreementDistance = 1.5
 
 var svg = d3.select(".hierarchy").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
+var tree = d3.select(".tree").append("svg").attr("width",390).attr("height",height)
 
 queue()
   .defer(d3.json, 'hierarchy.json')
@@ -58,7 +91,7 @@ return arr;
 
 
 function treemap(nodes) {
-  var g = svg.append("g").attr("class","treemap").attr("transform","translate(" + margin.left + "," + margin.top + ")");
+  var g = tree.append("g").attr("class","treemap").attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
   var link = g.selectAll(".link")
     .data( nodes.descendants().slice(1))
@@ -108,7 +141,7 @@ function barchart(subCategories,data) {
   .attr("transform","translate(0,"+margin.top+")")
   .selectAll("rect").data(subCategories).enter()
     .append("rect")
-    .attr("x",400)
+    .attr("x",0)
     .attr("y",d => d.x -3)
     .attr("width", d => scoreSize(d.overall))
     .attr("height", 6)
@@ -208,7 +241,7 @@ function move(agreements, data, sortBy) {
   .transition().duration(1500)
   .attr("transform",function(d) {
     var x = groupStart(d[sortBy]);
-    x += 450
+    x += 50
     
     var groupPosition = groups.findIndex(g => g[0] == d[sortBy])
     var agreementsPosition = groups[groupPosition][1].findIndex(g => g == d)
@@ -221,7 +254,7 @@ function move(agreements, data, sortBy) {
   d3.selectAll("#groupLabel").remove();
   var groupLabel = svg.append("g").attr("id","groupLabel").selectAll("g").data(Object.values(groups)).enter()
   groupLabel.append("g")
-  .attr("transform",d =>"translate("+(450 + groupStart(d[0]))+",120)")
+  .attr("transform",d =>"translate("+(50 + groupStart(d[0]))+",120)")
   .append("text").attr("class","label")
   .text(d=>{
     var name
@@ -241,7 +274,7 @@ function move(agreements, data, sortBy) {
     }
     return name;
   })
-  .style("font-size",13)
+  .style("font-size","8pt")
   .attr("transform","rotate(-35)")
 }
 
