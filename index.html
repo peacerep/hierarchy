@@ -33,6 +33,7 @@
   </div>
 
   <script>
+    'use strict';
 (function(window){
   var supportPageOffset = window.pageXOffset !== undefined;
   var isCSS1Compat = ((document.compatMode || "") === "CSS1Compat");
@@ -42,15 +43,8 @@
   });
   
 })(window);
- 
-  </script>
-  
-  <!--<div>
-    <div class="tree"></div>
-    <div class="hierarchy"></div>
-  </div>-->
-<script>
-'use strict';
+
+
 var margin = {top: 130, right: 90, bottom: 30, left: 90},
     width = 2500 - margin.left - margin.right,
     height = 1200;
@@ -109,7 +103,9 @@ function treemap(nodes) {
       return "node" + 
         (d.children ? " node--internal" : " node--leaf"); })
     .attr("transform", function(d) { 
-      return "translate(" + d.y + "," + d.x + ")"; });
+      return "translate(" + d.y + "," + d.x + ")"; })
+    .on("mouseover",d=> {if(!d.children) d3.selectAll("circle."+d.data.short).attr("fill",d3.rgb(70,130,180,.7))})
+    .on("mouseout",d=>d3.selectAll("circle").attr("fill",d3.rgb(0,0,0,.7)))
 
   node.append("text")
     .attr("dy", ".35em")
@@ -149,11 +145,11 @@ function barchart(subCategories,data) {
 function drawAgreements(data, root) {
   var agreements = svg.append("g").attr("class","agreements").selectAll("g")
   .data(data).enter()
-  .append("g").attr("class","agreement")
+  .append("g").attr("class","agreement").attr("id",d=>"Agt-"+d.AgtId)
 
   agreements.append("line")
   .attr("x1",0).attr("y1",margin.top).attr("x2",0).attr("y2",height)
-  .style("stroke",d3.rgb(0,0,0,.6)).style("stroke-width",.2)
+  .style("stroke",d3.rgb(0,0,0,.8)).style("stroke-width",.2)
 
   agreements.append("text").attr("class","name")
   .attr("x",-0)
@@ -164,21 +160,28 @@ function drawAgreements(data, root) {
   //.text(d => d.Year)
   
   //var colorScale = d3.scaleOrdinal().domain([1,2,3]).range(["#FCE4BD","#FAD18F","#F9C46F"])
-  var circles = agreements.selectAll("circle").data(d => d.content).enter().append("circle").attr("fill","black")
-  .attr("cy",d => d.x + margin.top)
-  .attr("cx",0)
-  .attr("r",d => d.level * 1.5)
-  .attr("fill",d3.rgb(0,0,0,.5))
+  var circles = agreements.selectAll("circle").data(d => d.content).enter().append("circle")
+    .attr("class",d=>d.category)
+    .attr("fill","black")
+    .attr("cy",d => d.x + margin.top)
+    .attr("cx",0)
+    .attr("r",d => d.level * 1.5)
+    .attr("fill",d3.rgb(0,0,0,.7))
  
   var div = d3.select("body").append("div") 
     .attr("class", "tooltip")       
     .style("opacity", 0);
 
-  circles.on("mouseover",function(d){
+  circles.on("mouseover",d=>{
     div.transition().duration(200).style("opacity", .9);    
-    div.html("<strong>Peace Process</strong>: "+d.PPName + "<br> <Strong>Agreement</strong>: "+ d.agreement + "<br><strong>"+ d.category + "</strong>: "+ d.level ).style("left", (d3.event.pageX + 5) + "px").style("top", (d3.event.pageY) + "px");  
-  })
-  .on("mouseout",function(d){div.transition().duration(200).style("opacity", 0);})
+    div.html("<strong>Peace Process</strong>: "+d.PPName + "<br> <Strong>Agreement</strong>: "+ d.agreement + "<br><strong>"+ d.category + "</strong>: "+ d.level ).style("left", (d3.event.pageX + 5) + "px").style("top", (d3.event.pageY) + "px");
+  }).on("mouseout",_=>div.transition().duration(200).style("opacity", 0))
+  
+  /*agreements.on("mouseover",d=>{
+    agreements.style("opacity",.1)
+    d3.select("#Agt-"+d.AgtId).style("opacity",1)
+  }).on("mouseout",_ => agreements.style("opacity",1))*/
+
 
   return agreements;
 }
