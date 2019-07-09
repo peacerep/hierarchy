@@ -36,12 +36,9 @@
 (function(window){
   var supportPageOffset = window.pageXOffset !== undefined;
   var isCSS1Compat = ((document.compatMode || "") === "CSS1Compat");
- 
-  var demoItem3 = document.getElementById("tree"); 
   window.addEventListener("scroll", function(e) {    
   var y = supportPageOffset ? window.pageYOffset : isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
- 
-    demoItem3.style.top = -y + $("#intro").height()+ 100 + "px";
+  document.getElementById("tree").style.top = -y + $("#intro").height()+ 100 + "px";
   });
   
 })(window);
@@ -56,14 +53,15 @@
 'use strict';
 var margin = {top: 130, right: 90, bottom: 30, left: 90},
     width = 2500 - margin.left - margin.right,
-    height = 1650;
+    height = 1200;
 
-var agreementDistance = 1.5
+var agreementDistance = 1.5;
+var treeWidth = 590;
 
-var svg = d3.select(".hierarchy").append("svg")
+var svg = d3.select(".hierarchy").style("margin-left",(treeWidth)+"px").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
-var tree = d3.select(".tree").append("svg").attr("width",390).attr("height",height)
+var tree = d3.select(".tree").append("svg").attr("width",treeWidth).attr("height",height)
 
 queue()
   .defer(d3.json, 'hierarchy.json')
@@ -72,7 +70,7 @@ queue()
 
 
 var createNodes = function (root) {
-  var treemap = d3.tree().size([height, 300]);
+  var treemap = d3.tree().size([height-margin.top, treeWidth-90]);
   return treemap(d3.hierarchy(root, function(d) {return d.children;}))
 }
 
@@ -154,7 +152,7 @@ function drawAgreements(data, root) {
   .append("g").attr("class","agreement")
 
   agreements.append("line")
-  .attr("x1",0).attr("y1",margin.top).attr("x2",0).attr("y2",height + margin.top)
+  .attr("x1",0).attr("y1",margin.top).attr("x2",0).attr("y2",height)
   .style("stroke",d3.rgb(0,0,0,.6)).style("stroke-width",.2)
 
   agreements.append("text").attr("class","name")
@@ -226,7 +224,6 @@ function move(agreements, data, sortBy) {
   }
 
   
-
   var groupStart = function(group) {
     var x = 0
     var posArr = groups.findIndex(g => g[0] == group)
@@ -250,6 +247,7 @@ function move(agreements, data, sortBy) {
     return "translate("+(x)+",0)";
   })
 
+  
 
   d3.selectAll("#groupLabel").remove();
   var groupLabel = svg.append("g").attr("id","groupLabel").selectAll("g").data(Object.values(groups)).enter()
@@ -276,6 +274,8 @@ function move(agreements, data, sortBy) {
   })
   .style("font-size","8pt")
   .attr("transform","rotate(-35)")
+
+  svg.style("width",d3.max(Object.values(groups).map(x=>groupStart(x[0]))) + 500)
 }
 
 function init(error,root,data) {
