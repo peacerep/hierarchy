@@ -167,19 +167,8 @@ function drawAgreements(data, root) {
   var circles = agreements.selectAll("circle").data(d => d.content).enter().append("circle").attr("fill","black")
   .attr("cy",d => d.x + margin.top)
   .attr("cx",0)
-  .attr("r",d => d.level * 1)
-  .attr("fill",d => {
-    return "black"
-  })
-
-
-  /*findParent("ImPK", root);
-  function findParent(needle, root) {
-    console.log(root)
-    //products.find(product => product.items.some(item => item.name === 'milk'));
-    var foo = Object.values(root.children).find(haystack => haystack.children.some(child => child.short === needle)).name
-  }*/
-
+  .attr("r",d => d.level * 1.5)
+  .attr("fill",d3.rgb(0,0,0,.5))
  
   var div = d3.select("body").append("div") 
     .attr("class", "tooltip")       
@@ -275,6 +264,7 @@ function move(agreements, data, sortBy) {
   .style("font-size","8pt")
   .attr("transform","rotate(-35)")
 
+  //set svg width to accommodate groups
   svg.style("width",d3.max(Object.values(groups).map(x=>groupStart(x[0]))) + 500)
 }
 
