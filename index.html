@@ -58,8 +58,8 @@ var svg = d3.select(".hierarchy").style("margin-left",(treeWidth)+"px").append("
 var tree = d3.select(".tree").append("svg").attr("width",treeWidth).attr("height",height)
 
 queue()
-  .defer(d3.json, 'hierarchy.json')
-  .defer(d3.csv, 'pax_all_agreements_Jun-2019.csv')
+  .defer(d3.json, 're_hierarchy.json')
+  .defer(d3.csv, 'pax_all_agreements_data_v9.csv')
   .await(init);
 
 

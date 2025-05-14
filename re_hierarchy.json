@@ -1,0 +1,454 @@
+{
+  "children": [
+    {
+      "name": "Groups",
+      "children": [
+        {
+          "short": "GCh",
+          "name": "Children/youth"
+        },
+        {
+          "short": "GDis",
+          "name": "Disabled persons"
+        },
+        {
+          "short": "GAge",
+          "name": "Elderly/age"
+        },
+        {
+          "short": "GMig",
+          "name": "Migrant workers"
+        },
+        {
+          "short": "GRa",
+          "name": "Racial/ethnic/national group"
+        },
+        {
+          "short": "GRe",
+          "name": "Religious groups"
+        },
+        {
+          "short": "GInd",
+          "name": "Indigenous people"
+        },
+        {
+          "short": "GOth",
+          "name": "Other groups"
+        },
+        {
+          "short": "GRef",
+          "name": "Refugees/displaced persons"
+        },
+        {
+          "short": "GSoc",
+          "name": "Social class"
+        }
+      ]
+    },
+    {
+      "name": "Gender",
+      "children": [
+        {
+          "short": "GeWom",
+          "name": "Women, girls and gender"
+        },
+        {
+          "short": "GeMe",
+          "name": "Men and boys"
+        },
+        {
+          "short": "GeLgbti",
+          "name": "LGBTI"
+        },
+        {
+          "short": "GeFa",
+          "name": "Family"
+        }
+      ]
+    },
+    {
+      "name": "State definition",
+      "children": [
+        {
+          "short": "StGen",
+          "name": "Nature of state (general)"
+        },
+        {
+          "short": "StCon",
+          "name": "State configuration"
+        },
+        {
+          "short": "StSd",
+          "name": "Self determination"
+        },
+        {
+          "short": "StRef",
+          "name": "Referendum"
+        },
+        {
+          "short": "StSym",
+          "name": "State symbols"
+        },
+        {
+          "short": "StInd",
+          "name": "Independence/secession"
+        },
+        {
+          "short": "StUni",
+          "name": "Accession/unification"
+        },
+        {
+          "short": "StBor",
+          "name": "Border delimitation"
+        },
+        {
+          "short": "StXbor",
+          "name": "Cross-border provision"
+        }
+      ]
+    },
+    {
+      "name": "Governance",
+      "children": [
+        {
+          "short": "Pol",
+          "name": "Political institutions (new or reformed)"
+        },
+        {
+          "short": "Ele",
+          "name": "Elections"
+        },
+        {
+          "short": "ElecComm",
+          "name": "Electoral commission"
+        },
+        {
+          "short": "PolPar",
+          "name": "Political parties reform"
+        },
+        {
+          "short": "Civso",
+          "name": "Civil society"
+        },
+        {
+          "short": "Tral",
+          "name": "Traditional/religious leaders"
+        },
+        {
+          "short": "Pubad",
+          "name": "Public administration"
+        },
+        {
+          "short": "ConGen",
+          "name": "Constitution"
+        }
+      ]
+    },
+    {
+      "name": "Power sharing",
+      "children": [
+        {
+          "short": "Polps",
+          "name": "Political power sharing"
+        },
+        {
+          "short": "Terps",
+          "name": "Territorial power sharing"
+        },
+        {
+          "short": "Eps",
+          "name": "Economic power sharing"
+        },
+        {
+          "short": "Mps",
+          "name": "Military power sharing"
+        }
+      ]
+    },
+    {
+      "name": "Human rights and equality",
+      "children": [
+        {
+          "short": "HrGen",
+          "name": "Human rights/RoL general"
+        },
+        {
+          "short": "HrBor",
+          "name": "Bill of rights/similar"
+        },
+        {
+          "short": "HrTrinc",
+          "name": "Treaty incorporation"
+        },
+        {
+          "short": "HrCp",
+          "name": "Civil and political rights"
+        },
+        {
+          "short": "HrSec",
+          "name": "Socio-economic rights"
+        }
+      ]
+    },
+    {
+      "name": "Rights related issues",
+      "children": [
+        {
+          "short": "HrCit",
+          "name": "Citizenship"
+        },
+        {
+          "short": "HrDem",
+          "name": "Democracy"
+        },
+        {
+          "short": "HrDet",
+          "name": "Detention procedures"
+        },
+        {
+          "short": "Med",
+          "name": "Media and communication"
+        },
+        {
+          "short": "HrMob",
+          "name": "Mobility/access"
+        },
+        {
+          "short": "Prot",
+          "name": "Protection measures"
+        },
+        {
+          "short": "RiOth",
+          "name": "Other"
+        }
+      ]
+    },
+    {
+      "name": "Rights institutions",
+      "children": [
+        {
+          "short": "HrNi",
+          "name": "NHRI"
+        },
+        {
+          "short": "HrIi",
+          "name": "Regional or international human rights institutions"
+        }
+      ]
+    },
+    {
+      "name": "Justice sector reform",
+      "children": [
+        {
+          "short": "JusCr",
+          "name": "Criminal justice and emergency law"
+        },
+        {
+          "short": "JusEm",
+          "name": "State of emergency provisions"
+        },
+        {
+          "short": "JusJu",
+          "name": "Judiciary and courts"
+        },
+        {
+          "short": "JusPri",
+          "name": "Prisons and detention"
+        },
+        {
+          "short": "JusTra",
+          "name": "Traditional Laws"
+        }
+      ]
+    },
+    {
+      "name": "Socio-economic reconstruction",
+      "children": [
+        {
+          "short": "Dev",
+          "name": "Development or socio-economic reconstruction"
+        },
+        {
+          "short": "NEC",
+          "name": "National economic plan"
+        },
+        {
+          "short": "NatRes",
+          "name": "Natural resources"
+        },
+        {
+          "short": "IntFu",
+          "name": "International funds"
+        },
+        {
+          "short": "Bus",
+          "name": "Business"
+        },
+        {
+          "short": "Tax",
+          "name": "Taxation"
+        },
+        {
+          "short": "Ban",
+          "name": "Banks"
+        }
+      ]
+    },
+    {
+      "name": "Land, property and environment",
+      "children": [
+        {
+          "short": "LaRef",
+          "name": "Land reform/rights"
+        },
+        {
+          "short": "LaNom",
+          "name": "Pastoralist/nomadism rights"
+        },
+        {
+          "short": "LaCH",
+          "name": "Cultural heritage"
+        },
+        {
+          "short": "LaEn",
+          "name": "Environment"
+        },
+        {
+          "short": "Wat",
+          "name": "Water or riparian rights or access"
+        }
+      ]
+    },
+    {
+      "name": "Security sector",
+      "children": [
+        {
+          "short": "SsrGua",
+          "name": "Security Guarantees"
+        },
+        {
+          "short": "Ce",
+          "name": "Ceasefire"
+        },
+        {
+          "short": "SsrPol",
+          "name": "Police"
+        },
+        {
+          "short": "SsrArm",
+          "name": "Armed forces"
+        },
+        {
+          "short": "SsrDdr",
+          "name": "DDR"
+        },
+        {
+          "short": "SsrInt",
+          "name": "Intelligence services"
+        },
+        {
+          "short": "SsrPsf",
+          "name": "Parastatal/rebel and opposition group forces"
+        },
+        {
+          "short": "SsrFf",
+          "name": "Withdrawal of foreign forces"
+        },
+        {
+          "short": "Cor",
+          "name": "Corruption"
+        },
+        {
+          "short": "SsrCrOcr",
+          "name": "Crime/organised crime"
+        },
+        {
+          "short": "SsrDrugs",
+          "name": "Drugs"
+        },
+        {
+          "short": "Terr",
+          "name": "Terrorism"
+        }
+      ]
+    },
+    {
+      "name": "Transitional justice",
+      "children": [
+        {
+          "short": "TjGen",
+          "name": "Transitional justice general"
+        },
+        {
+          "short": "TjAm",
+          "name": "Amnesty/pardon"
+        },
+        {
+          "short": "TjCou",
+          "name": "Courts"
+        },
+        {
+          "short": "TjMech",
+          "name": "Mechanism"
+        },
+        {
+          "short": "TjPrire",
+          "name": "Prisoner release"
+        },
+        {
+          "short": "TjVet",
+          "name": "Vetting"
+        },
+        {
+          "short": "TjVic",
+          "name": "Victims"
+        },
+        {
+          "short": "TjMis",
+          "name": "Missing persons"
+        },
+        {
+          "short": "TjRep",
+          "name": "Reparations"
+        },
+        {
+          "short": "TjNR",
+          "name": "Reconciliation"
+        }
+      ]
+    },
+    {
+      "name": "Implementation",
+      "children": [
+        {
+          "short": "ImUN",
+          "name": "UN signatory"
+        },
+        {
+          "short": "ImOth",
+          "name": "Other international signatory"
+        },
+        {
+          "short": "ImRef",
+          "name": "Referendum for agreement"
+        },
+        {
+          "short": "ImPK",
+          "name": "International mission/force/similar"
+        },
+        {
+          "short": "ImE",
+          "name": "Enforcement mechanism"
+        },
+        {
+          "short": "ImRel",
+          "name": "Related cases"
+        },
+        {
+          "short": "ImSrc",
+          "name": "Source"
+        }
+      ]
+    }
+  ]
+}
