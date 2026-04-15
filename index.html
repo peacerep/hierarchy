@@ -4,6 +4,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/b ootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
   <link href="style.css" rel="stylesheet">
   <script src="//d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/queue.v1.min.js"></script>
@@ -20,6 +21,7 @@
       <div class="groupable">
         <h1 style="font-weight: bold;">Peace Agreement <br>Hierarchy & Continuity</h1>
         <p>The diversity of Peace Agreements is reflected in the variety of topics they touch.<br> Select a category to see, what areas are covered and how this changes over time:</p>
+        <p>Data version: <a href="https://www.peaceagreements.org/downloads/" target="_blank">PA-X V10</a></p>
       </div>
     </div>  
 
@@ -59,7 +61,7 @@ var tree = d3.select(".tree").append("svg").attr("width",treeWidth).attr("height
 
 queue()
   .defer(d3.json, 're_hierarchy.json')
-  .defer(d3.csv, 'pax_all_agreements_data_v9.csv')
+  .defer(d3.csv, 'pax_data_2257_agreements_v10.csv')
   .await(init);
 
 
@@ -194,6 +196,9 @@ function move(agreements, data, sortBy) {
 
   var groups = {}
   data.forEach(function(agreement){
+    // Parse 'Dat' in format dd/MM/yyyy → extract year
+    agreement.Year = +agreement.Dat.split('/')[2]
+
     if(typeof groups[agreement[sortBy]] === 'undefined') groups[agreement[sortBy]] = []
     groups[agreement[sortBy]].push(agreement)
   })
